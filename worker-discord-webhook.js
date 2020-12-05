@@ -17,7 +17,7 @@ async function handleRequest() {
     versionTested: constKvVersion
   }
 
-  if (response.required_version.toString() === tf2KvVersion.toString()) {
+  if (response.required_version.toString() === constKvVersion.toString()) {
     return new Response(JSON.stringify(resJson), init)
   } else {
     await updateVersionInKv(response.required_version)
