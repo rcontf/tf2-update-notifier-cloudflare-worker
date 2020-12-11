@@ -38,7 +38,7 @@ async function sendWebhookWithEmbed() {
     embeds: [{
       description: "A TF2 update has been released.",
       color: 15105570,
-      timestamp: Date.now().toString(),
+      timestamp: new Date(),
       footer: {
         text: "TF2 Update Worker"
       }
