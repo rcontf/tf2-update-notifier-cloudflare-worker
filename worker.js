@@ -16,7 +16,7 @@ async function handleRequest() {
     versionTested: constKvVersion
   }
 
-  if (response.required_version === constKvVersion) {
+  if (response.required_version.toString() === constKvVersion.toString()) {
     return new Response(JSON.stringify(resJson), init)
   } else {
     await updateVersionInKv(response.required_version)
