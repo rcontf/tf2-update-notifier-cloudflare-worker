@@ -12,7 +12,7 @@ async function updateVersionInKv(newVersion) {
 
 async function testForUpdate() {
   const constKvVersion = await TF2_UPDATE.get("VERSION")
-  const resFromTf2Api = await fetch(url, headers)
+  const resFromTf2Api = await fetch(STEAM_API_URL, headers)
   const { response } = await resFromTf2Api.json()
 
   const isNewUpdate = response.required_version.toString() !== constKvVersion.toString()

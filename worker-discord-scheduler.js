@@ -1,4 +1,4 @@
-const url = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
+const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
 
 const headers = {
   headers: {
@@ -32,7 +32,7 @@ async function sendWebhook() {
 
 async function testForUpdate() {
   const constKvVersion = await TF2_UPDATE.get("VERSION")
-  const resFromTf2Api = await fetch(url, headers)
+  const resFromTf2Api = await fetch(STEAM_API_URL, headers)
   const { response } = await resFromTf2Api.json()
 
   const isNewUpdate = response.required_version.toString() !== constKvVersion.toString()
