@@ -52,9 +52,9 @@ async function testForUpdate() {
 async function handleRequest() {
   const hasUpdate = await testForUpdate()
 
-  if (!hasUpdate) return new Response(JSON.stringify({ update: true }), headers)
+  if (!hasUpdate) return new Response(JSON.stringify({ update: false }), headers)
 
-  return new Response(JSON.stringify({ update: false }), headers)
+  return new Response(JSON.stringify({ update: true }), headers)
 }
 
 addEventListener("fetch", event => event.respondWith(handleRequest()))
