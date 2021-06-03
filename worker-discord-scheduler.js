@@ -1,6 +1,6 @@
 const url = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
 
-const init = {
+const headers = {
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,20 +26,18 @@ async function sendWebhook() {
   await fetch(DISCORD_WEBHOOK_1, {
     body: JSON.stringify(formBody),
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    }
+    headers
   })
 }
 
 async function testForUpdate() {
   const constKvVersion = await TF2_UPDATE.get("VERSION")
-  const resFromTf2Api = await fetch(url, init)
+  const resFromTf2Api = await fetch(url, headers)
   const { response } = await resFromTf2Api.json()
 
-  const newUpdate = response.required_version.toString() === constKvVersion.toString()
+  const isNewUpdate = response.required_version.toString() !== constKvVersion.toString()
 
-  if (!newUpdate) {
+  if (isNewUpdate) {
     await Promise.all([
       updateVersionInKv(response.required_version), sendWebhook()
     ])
@@ -51,19 +49,13 @@ async function testForUpdate() {
 }
 
 async function handleRequest() {
-  const update = await testForUpdate()
+  const hasUpdate = await testForUpdate()
 
-  if (!update) return new Response(JSON.stringify({ updated: false }), init)
+  if (!hasUpdate) return new Response(JSON.stringify({ update: false }), headers)
 
-  return new Response(JSON.stringify({ updated: true }), init)
+  return new Response(JSON.stringify({ update: true }), headers)
 }
 
-addEventListener("fetch", event => {
-  return event.respondWith(handleRequest())
-})
+addEventListener("fetch", event => event.respondWith(handleRequest()))
 
-addEventListener("scheduled", event => {
-  event.waitUntil(
-    testForUpdate()
-  )
-})
+addEventListener("scheduled", event => event.waitUntiltestForUpdate())

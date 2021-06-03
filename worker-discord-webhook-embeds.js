@@ -1,39 +1,17 @@
-const url = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
-const WEBHOOK_URL = "YOUR WEBHOOK LINK HERE"
+const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
 
-async function handleRequest() {
-  const init = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }
-
-  const constKvVersion = await TF2_UPDATE.get("VERSION")
-
-  const resFromTf2Api = await fetch(url, init)
-  const { response } = await resFromTf2Api.json()
-
-  const resJson = {
-    versionTested: constKvVersion
-  }
-
-  if (response.required_version.toString() === constKvVersion.toString()) {
-    return new Response(JSON.stringify(resJson), init)
-  } else {
-    await updateVersionInKv(response.required_version)
-    //send patch, post request to servers here...
-
-    //send webhook with content only if there was an update
-    await sendWebhookWithEmbed();
-    return new Response(JSON.stringify({ ...resJson, updated: true }), init)
-  }
+const headers = {
+  headers: {
+    "Content-Type": "application/json",
+  },
 }
 
 async function updateVersionInKv(newVersion) {
   await TF2_UPDATE.put("VERSION", newVersion)
 }
 
-async function sendWebhookWithEmbed() {
+async function sendWebhook() {
+  // Edit to hearts content
   const formBody = {
     embeds: [{
       description: "A TF2 update has been released.",
@@ -45,15 +23,38 @@ async function sendWebhookWithEmbed() {
     }]
   }
 
-  await fetch(WEBHOOK_URL, {
+  // Edit DISCORD_WEBHOOK_1 with whatever your ENV variable is
+  await fetch(DISCORD_WEBHOOK_1, {
     body: JSON.stringify(formBody),
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    }
+    headers
   })
 }
 
-addEventListener("fetch", event => {
-  return event.respondWith(handleRequest())
-})
+async function testForUpdate() {
+  const constKvVersion = await TF2_UPDATE.get("VERSION")
+  const resFromTf2Api = await fetch(url, headers)
+  const { response } = await resFromTf2Api.json()
+
+  const isNewUpdate = response.required_version.toString() !== constKvVersion.toString()
+
+  if (isNewUpdate) {
+    await Promise.all([
+      updateVersionInKv(response.required_version), sendWebhook()
+    ])
+
+    return true
+  }
+
+  return false
+}
+
+async function handleRequest() {
+  const hasUpdate = await testForUpdate()
+
+  if (!hasUpdate) return new Response(JSON.stringify({ update: false }), headers)
+
+  return new Response(JSON.stringify({ update: true }), headers)
+}
+
+addEventListener("fetch", event => event.respondWith(handleRequest()))
