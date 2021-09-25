@@ -58,4 +58,4 @@ async function handleRequest() {
 
 addEventListener("fetch", event => event.respondWith(handleRequest()))
 
-addEventListener("scheduled", event => event.waitUntiltestForUpdate())
+addEventListener("scheduled", event => event.waitUntil(testForUpdate()))
