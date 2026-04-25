@@ -21,7 +21,7 @@ export default {
 } satisfies ExportedHandler<Env>;
 
 async function updateVersionInKv(newVersion: string) {
-	env.TF2_UPDATE.put("VERSION", newVersion);
+	await env.TF2_UPDATE.put("VERSION", newVersion)
 }
 
 async function sendWebhook() {
