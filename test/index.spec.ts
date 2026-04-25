@@ -37,6 +37,9 @@ describe("tf2 update worker", () => {
 		`);
 
 		expect(fetchMock).toHaveBeenCalledOnce()
+
+		const updateVersion = await env.TF2_UPDATE.get("VERSION");
+		expect(updateVersion).toBe("1")
 	});
 
 	it("responds false when no new version is available", async () => {
@@ -65,6 +68,10 @@ describe("tf2 update worker", () => {
 		`);
 
 		expect(fetchMock).toHaveBeenCalledOnce()
+
+		const updateVersion = await env.TF2_UPDATE.get("VERSION");
+		expect(updateVersion).toBe("1")
+
 	});
 
 	it("responds true when new version is available", async () => {
@@ -93,5 +100,7 @@ describe("tf2 update worker", () => {
 		`);
 
 		expect(fetchMock).toHaveBeenCalledOnce()
+		const updateVersion = await env.TF2_UPDATE.get("VERSION");
+		expect(updateVersion).toBe("2")
 	});
 });
