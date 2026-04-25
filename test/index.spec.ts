@@ -35,5 +35,7 @@ describe("tf2 update worker", () => {
 			  "update": true,
 			}
 		`);
+
+		expect(fetchMock).toHaveBeenCalledOnce()
 	});
 });
