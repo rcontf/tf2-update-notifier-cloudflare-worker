@@ -48,13 +48,14 @@ async function sendWebhook() {
 }
 
 async function testForUpdate(ctx: ExecutionContext) {
-	const constKvVersion = await env.TF2_UPDATE.get("VERSION")
 	const resFromTf2Api = await fetch(STEAM_API_URL, { headers })
 
 	// If no response from steam, treat this as no new updates
 	if (!resFromTf2Api.ok) {
 		return false;
 	}
+
+	const constKvVersion = await env.TF2_UPDATE.get("VERSION")
 
 	const { response } = (await resFromTf2Api.json()) as any
 
