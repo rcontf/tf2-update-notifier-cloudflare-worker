@@ -1,0 +1,20 @@
+{
+  "name": "tf2-update-scraper",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.15.0",
+    "@types/node": "^25.6.0",
+    "miniflare": "^4.20260424.0",
+    "typescript": "^6.0.3",
+    "vitest": "~4.1.5",
+    "wrangler": "^4.85.0"
+  }
+}
