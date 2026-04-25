@@ -1,0 +1,24 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "tf2-update-scraper",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-04-25",
+	"observability": {
+		"enabled": false,
+	},
+	"upload_source_maps": true,
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"kv_namespaces": [
+		{
+			"binding": "TF2_UPDATE",
+			"id": "389cca4dd960483cbc91d7d5bdca4935"
+		}
+	],
+	"triggers": {
+		"crons": [
+			"*/5 * * * *"
+		]
+	}
+}
