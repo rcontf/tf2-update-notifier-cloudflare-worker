@@ -8,20 +8,20 @@ headers.append("Content-Type", "application/json");
 const discordWebhookUrl = env.DISCORD_WEBHOOK_1;
 
 export default {
-	async fetch(_, _1, _2): Promise<Response> {
-		const hasupdate = await testForUpdate()
+	async fetch(_, _1, ctx): Promise<Response> {
+		const hasupdate = await testForUpdate(ctx)
 
 		if (!hasupdate) return new Response(JSON.stringify({ update: false }), { headers })
 
 		return new Response(JSON.stringify({ update: true }), { headers })
 	},
-	async scheduled(_, _1, _2) {
-		await testForUpdate();
+	async scheduled(_, _1, ctx) {
+		await testForUpdate(ctx);
 	}
 } satisfies ExportedHandler<Env>;
 
 async function updateVersionInKv(newVersion: string) {
-	await env.TF2_UPDATE.put("VERSION", newVersion)
+	env.TF2_UPDATE.put("VERSION", newVersion);
 }
 
 async function sendWebhook() {
@@ -40,15 +40,14 @@ async function sendWebhook() {
 		}]
 	}
 
-	// Edit DISCORD_WEBHOOK_1 with whatever your ENV variable is
 	await fetch(discordWebhookUrl, {
 		body: JSON.stringify(formBody),
 		method: "POST",
 		headers,
-	})
+	});
 }
 
-async function testForUpdate() {
+async function testForUpdate(ctx: ExecutionContext) {
 	const constKvVersion = await env.TF2_UPDATE.get("VERSION")
 	const resFromTf2Api = await fetch(STEAM_API_URL, { headers })
 
@@ -62,9 +61,9 @@ async function testForUpdate() {
 	const isNewUpdate = response.required_version.toString() !== constKvVersion?.toString()
 
 	if (isNewUpdate) {
-		await Promise.all([
+		ctx.waitUntil(Promise.all([
 			updateVersionInKv(response.required_version), sendWebhook()
-		])
+		]));
 
 		return true
 	}
