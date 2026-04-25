@@ -1,8 +1,8 @@
 import {
-	env,
 	createExecutionContext,
 	waitOnExecutionContext,
 } from "cloudflare:test";
+import { env } from "cloudflare:workers";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import worker from "../src/index";
 
@@ -36,7 +36,7 @@ describe("tf2 update worker", () => {
 			}
 		`);
 
-		expect(fetchMock).toHaveBeenCalledOnce()
+		expect(fetchMock).toHaveBeenCalledTimes(2)
 
 		const updateVersion = await env.TF2_UPDATE.get("VERSION");
 		expect(updateVersion).toBe("1")
@@ -99,7 +99,7 @@ describe("tf2 update worker", () => {
 			}
 		`);
 
-		expect(fetchMock).toHaveBeenCalledOnce()
+		expect(fetchMock).toHaveBeenCalledTimes(2)
 		const updateVersion = await env.TF2_UPDATE.get("VERSION");
 		expect(updateVersion).toBe("2")
 	});

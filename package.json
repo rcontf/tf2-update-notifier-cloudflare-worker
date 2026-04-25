@@ -10,11 +10,11 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.12.4",
+    "@cloudflare/vitest-pool-workers": "^0.15.0",
     "@types/node": "^25.6.0",
     "miniflare": "^4.20260424.0",
-    "typescript": "^5.5.2",
-    "vitest": "~3.2.0",
+    "typescript": "^6.0.3",
+    "vitest": "~4.1.5",
     "wrangler": "^4.85.0"
   }
 }

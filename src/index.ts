@@ -5,7 +5,7 @@ const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/
 const headers = new Headers();
 headers.append("Content-Type", "application/json");
 
-const discordWebhookUrl = process.env.DISCORD_WEBHOOK_1;
+const discordWebhookUrl = env.DISCORD_WEBHOOK_1;
 
 export default {
 	async fetch(_, _1, _2): Promise<Response> {
