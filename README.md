@@ -1,16 +1,36 @@
-# tf2-update-notifier-cloudflare-worker
+<div align="center">
+  <h1>TF2 Update Notifier</h1>
+  <p><em>A notification service that alerts on Discord whether there was a TF2 update, powered by Cloudflare Workers</em></p>
+</div>
 
-Sends a request to Steam's API to be notified if there was a TF2 update.
+Sends a Discord webhook when there is a new TF2 update. This stack can be adjusted to notify a build job, to create alerts for users, or to get the latest update news!
 
-# Usage
+# Setup
 
-- Create a Cloudflare Worker application.
-- Create a KV container.
-- Inside the KV container, you will need to add a `VERSION` key.
-- Set `VERSION` key to latest update, or let the script run once.
-- Link the KV to the worker and name the KV `TF2_UPDATE`
-- Done! `VERSION` will be automatically updated if there was an update.
+1. Deploy to Cloudflare. The deploy flow will automatically provision required resources and prompt for additional information.
 
-# Expandability
+     [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/rcontf/tf2-update-notifier-cloudflare-worker)
 
-You can use this worker to call your API to trigger a build of an image or to automatically update a TF2 server through a backend. This only parses the latest update and notifies you of such update. Any API calls outbound should be placed in ENV variables for safety.
+## Features
+
+- Cron schedule to check every 5 minutes
+- API access to check whether a new update is available
+- Unit tests to verify the behavior
+
+## Stack
+
+- Cloudflare Workers, Workers KV
+
+## Getting Started
+
+```bash
+npm install
+
+npm run dev
+```
+
+### Deploy
+
+```bash
+npm run deploy
+```
