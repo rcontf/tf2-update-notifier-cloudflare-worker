@@ -16,7 +16,7 @@ describe("tf2 update worker", () => {
 	it("responds true if no kvp was present", async () => {
 		const fetchMock = vi.fn().mockResolvedValue({
 			ok: true,
-			json: () => Promise.resolve({ response: { required_version: 1 } })
+			json: () => Promise.resolve({ response: { required_version: 1, up_to_date: false } })
 		})
 
 		vi.stubGlobal('fetch', fetchMock);
@@ -47,7 +47,7 @@ describe("tf2 update worker", () => {
 
 		const fetchMock = vi.fn().mockResolvedValue({
 			ok: true,
-			json: () => Promise.resolve({ response: { required_version: 1 } })
+			json: () => Promise.resolve({ response: { up_to_date: true } })
 		})
 
 		vi.stubGlobal('fetch', fetchMock);
@@ -79,7 +79,7 @@ describe("tf2 update worker", () => {
 
 		const fetchMock = vi.fn().mockResolvedValue({
 			ok: true,
-			json: () => Promise.resolve({ response: { required_version: 2 } })
+			json: () => Promise.resolve({ response: { required_version: 2, up_to_date: false } })
 		})
 
 		vi.stubGlobal('fetch', fetchMock);

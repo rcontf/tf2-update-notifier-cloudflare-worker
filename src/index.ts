@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 
-const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440&version=0"
+const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440";
 
 const headers = new Headers();
 headers.append("Content-Type", "application/json");
@@ -48,20 +48,21 @@ async function sendWebhook() {
 }
 
 async function testForUpdate(ctx: ExecutionContext) {
-	const resFromTf2Api = await fetch(STEAM_API_URL, { headers })
+	const constKvVersion = await env.TF2_UPDATE.get("VERSION") ?? '0';
+
+	const resFromTf2Api = await fetch(`${STEAM_API_URL}&version=${constKvVersion}`, { headers })
 
 	// If no response from steam, treat this as no new updates
 	if (!resFromTf2Api.ok) {
+		console.error({ message: "Failed to get response from Steam", statusCode: resFromTf2Api.status });
 		return false;
 	}
 
-	const constKvVersion = await env.TF2_UPDATE.get("VERSION")
-
 	const { response } = (await resFromTf2Api.json()) as any
 
-	const isNewUpdate = response.required_version.toString() !== constKvVersion?.toString()
+	const isNewUpdate = response.up_to_date;
 
-	if (isNewUpdate) {
+	if (!isNewUpdate) {
 		ctx.waitUntil(Promise.all([
 			updateVersionInKv(response.required_version), sendWebhook()
 		]));
