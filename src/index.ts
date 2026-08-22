@@ -26,6 +26,7 @@ async function updateVersionInKv(newVersion: string) {
 
 async function sendWebhook() {
 	if (discordWebhookUrl == null) {
+		console.info("No discord webhook configured");
 		return;
 	}
 
