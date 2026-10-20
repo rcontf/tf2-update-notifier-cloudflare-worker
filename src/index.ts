@@ -12,9 +12,7 @@ export default {
 	async fetch(_, _1, ctx): Promise<Response> {
 		const hasupdate = await testForUpdate(ctx)
 
-		if (!hasupdate) return new Response(JSON.stringify({ update: false }), { headers })
-
-		return new Response(JSON.stringify({ update: true }), { headers })
+		return new Response(JSON.stringify({ update: hasupdate }), { headers })
 	},
 	async scheduled(_, _1, ctx) {
 		await testForUpdate(ctx);
