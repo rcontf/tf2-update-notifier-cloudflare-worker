@@ -1,11 +1,12 @@
 import { env } from "cloudflare:workers";
+import { getLatestPatchNotes } from "./notes";
 
 const STEAM_API_URL = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1/?appid=440";
 
 const headers = new Headers();
 headers.append("Content-Type", "application/json");
 
-const discordWebhookUrl = env.DISCORD_WEBHOOK_1;
+const discordWebhookUrl = `${env.DISCORD_WEBHOOK_1}?with_components=true`;
 
 export default {
 	async fetch(_, _1, ctx): Promise<Response> {
@@ -30,22 +31,32 @@ async function sendWebhook() {
 		return;
 	}
 
-	const formBody = {
-		embeds: [{
-			description: "A TF2 update has been released.",
-			color: 15105570,
-			timestamp: new Date(),
-			footer: {
-				text: "TF2 Update Worker"
-			}
-		}]
-	}
+	const notes = await getLatestPatchNotes();
 
-	await fetch(discordWebhookUrl, {
+	const formBody = {
+		flags: 32768,
+		components: [
+			{
+				type: 17,
+				accent_color: 13595446,
+				components: [
+					{ type: 10, content: `**[${notes?.title}](${notes?.link})**` },
+					{ type: 14, spacing: 1, divider: true },
+					{ type: 10, content: (notes?.markdown ?? "New TF2 Update").length > 3997 ? `${notes?.markdown.substring(0, 3997)}...` : notes?.markdown }
+				]
+			}
+		]
+	};
+
+	const res = await fetch(discordWebhookUrl, {
 		body: JSON.stringify(formBody),
 		method: "POST",
 		headers,
 	});
+
+	if (!res.ok) {
+		console.warn({ message: "failed to send webhook", details: await res.text() });
+	}
 }
 
 async function testForUpdate(ctx: ExecutionContext) {
@@ -65,7 +76,8 @@ async function testForUpdate(ctx: ExecutionContext) {
 
 	if (!isNewUpdate) {
 		ctx.waitUntil(Promise.all([
-			updateVersionInKv(response.required_version), sendWebhook()
+			updateVersionInKv(response.required_version),
+			sendWebhook()
 		]));
 
 		return true
